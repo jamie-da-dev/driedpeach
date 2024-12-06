@@ -611,3 +611,20 @@ button.reset:hover:not(:has(> *)) {
 .account-logout {
   display: inline-block;
 }
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 15px; /* Set the width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #ffffff; /* Set the track (background) color */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ff8282; /* Set the thumb color */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ffafaf; /* Darker shade when hovered */
+}

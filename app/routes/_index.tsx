@@ -6,6 +6,7 @@ import {Image, Money} from '@shopify/hydrogen';
 import type {
   FeaturedCollectionFragment,
   RecommendedProductsQuery,
+  StoreCollectionsQuery,
 } from 'storefrontapi.generated';
 
 export const meta: MetaFunction = () => {
@@ -51,8 +52,16 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
       return null;
     });
 
+  const collections = context.storefront
+    .query(ALL_COLLECTIONS_QUERY)
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
+
   return {
     recommendedProducts,
+    collections,
   };
 }
 
@@ -112,6 +121,7 @@ export default function Homepage() {
       {/* Existing Homepage Components */}
       <FeaturedCollection collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
+      <AllCollections collections={data.collections} />
     </div>
   );
 }
@@ -178,6 +188,44 @@ function RecommendedProducts({
   );
 }
 
+function AllCollections({
+  collections,
+}: {
+  collections: Promise<StoreCollectionsQuery | null>;
+}) {
+  return (
+    <div className="all-collections">
+      <h2>All Collections</h2>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Await resolve={collections}>
+          {(response) => (
+            <div className="all-collections-grid">
+              {response && response.collections
+                ? response.collections.nodes.map((collection) => (
+                    <Link
+                      key={collection.id}
+                      className="collection-item"
+                      to={`/collections/${collection.handle}`}
+                    >
+                      {collection.image && (
+                        <Image
+                          data={collection.image}
+                          aspectRatio="1/1"
+                          sizes="(min-width: 45em) 20vw, 50vw"
+                        />
+                      )}
+                      <h4>{collection.title}</h4>
+                    </Link>
+                  ))
+                : null}
+            </div>
+          )}
+        </Await>
+      </Suspense>
+    </div>
+  );
+}
+
 const FEATURED_COLLECTION_QUERY = `#graphql
   fragment FeaturedCollection on Collection {
     id
@@ -227,6 +275,29 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     products(first: 4, sortKey: UPDATED_AT, reverse: true) {
       nodes {
         ...RecommendedProduct
+      }
+    }
+  }
+` as const;
+
+const ALL_COLLECTIONS_QUERY = `#graphql
+  fragment Collection on Collection {
+    id
+    title
+    handle
+    image {
+      id
+      url
+      altText
+      width
+      height
+    }
+  }
+  query AllCollections($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    collections(first: 6) {
+      nodes {
+        ...Collection
       }
     }
   }
