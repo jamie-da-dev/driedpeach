@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import {Suspense, startTransition} from 'react';
 import {Await, NavLink, useAsyncValue} from '@remix-run/react';
 import {
   type CartViewPayload,
@@ -7,6 +7,12 @@ import {
 } from '@shopify/hydrogen';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
+
+// Import React Icons
+import {VscAccount} from 'react-icons/vsc';
+import {IoIosSearch} from 'react-icons/io';
+import {MdOutlineShoppingBag} from 'react-icons/md';
+import {IoCartOutline} from 'react-icons/io5';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -72,17 +78,6 @@ export function HeaderMenu({
 
   return (
     <nav className={className} role="navigation">
-      {viewport === 'mobile' && (
-        <NavLink
-          end
-          onClick={close}
-          prefetch="intent"
-          style={activeLinkStyle}
-          to="/"
-        >
-          Home
-        </NavLink>
-      )}
       {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
         if (!item.url) return null;
 
@@ -93,6 +88,7 @@ export function HeaderMenu({
           item.url.includes(primaryDomainUrl)
             ? new URL(item.url).pathname
             : item.url;
+
         return (
           <NavLink
             className="header-menu-item"
@@ -117,16 +113,24 @@ function HeaderCtas({
 }: Pick<HeaderProps, 'isLoggedIn' | 'cart'>) {
   return (
     <nav className="header-ctas" role="navigation">
-      {/* Removed the mobile toggle button from here */}
+      {/* Account Icon */}
       <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
-        <Suspense fallback="Sign in">
-          <Await resolve={isLoggedIn} errorElement="Sign in">
-            {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
+        <Suspense fallback={<VscAccount />}>
+          <Await resolve={isLoggedIn} errorElement={<VscAccount />}>
+            {(isLoggedIn) => (isLoggedIn ? <VscAccount /> : <VscAccount />)}
           </Await>
         </Suspense>
       </NavLink>
+
+      {/* Search Icon using SearchToggle */}
       <SearchToggle />
-      <CartToggle cart={cart} />
+
+      {/* Cart Icon */}
+      <Suspense fallback={<CartBadge count={null} />}>
+        <Await resolve={cart}>
+          {(cartData) => <CartBanner originalCart={cartData} />}
+        </Await>
+      </Suspense>
     </nav>
   );
 }
@@ -144,10 +148,11 @@ function HeaderMenuMobileToggle() {
 }
 
 function SearchToggle() {
-  const {open} = useAside();
+  const {open} = useAside(); // Proper usage of hook at the top level
+
   return (
-    <button className="reset" onClick={() => open('search')}>
-      Search
+    <button className="reset search-button" onClick={() => open('search')}>
+      <IoIosSearch />
     </button>
   );
 }
@@ -169,24 +174,19 @@ function CartBadge({count}: {count: number | null}) {
           url: window.location.href || '',
         } as CartViewPayload);
       }}
+      className="cart-icon"
     >
-      Cart {count === null ? <span>&nbsp;</span> : count}
+      <MdOutlineShoppingBag />
+      {count === null ? <span>&nbsp;</span> : count}
     </a>
   );
 }
 
-function CartToggle({cart}: Pick<HeaderProps, 'cart'>) {
-  return (
-    <Suspense fallback={<CartBadge count={null} />}>
-      <Await resolve={cart}>
-        <CartBanner />
-      </Await>
-    </Suspense>
-  );
-}
-
-function CartBanner() {
-  const originalCart = useAsyncValue() as CartApiQueryFragment | null;
+function CartBanner({
+  originalCart,
+}: {
+  originalCart: CartApiQueryFragment | null;
+}) {
   const cart = useOptimisticCart(originalCart);
   return <CartBadge count={cart?.totalQuantity ?? 0} />;
 }

@@ -1,3 +1,4 @@
+import {useEffect, useState} from 'react';
 import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {Await, useLoaderData, Link, type MetaFunction} from '@remix-run/react';
 import {Suspense} from 'react';
@@ -55,10 +56,60 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
   };
 }
 
+function ImageSlider() {
+  const images = [
+    'https://cdn.shopify.com/s/files/1/0907/0765/6991/files/pexels-cottonbro-4273468.jpg?v=1733457078',
+    'https://cdn.shopify.com/s/files/1/0907/0765/6991/files/pexels-cottonbro-4270179.jpg?v=1733457078',
+    'https://cdn.shopify.com/s/files/1/0907/0765/6991/files/pexels-cottonbro-4270154.jpg?v=1733457078',
+  ];
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1,
+    );
+  };
+
+  return (
+    <div className="image-slider">
+      <button className="image-slider-arrow-left" onClick={prevSlide}>
+        &#8249;
+      </button>
+      <button className="image-slider-arrow-right" onClick={nextSlide}>
+        &#8250;
+      </button>
+      <img src={images[currentIndex]} alt={`Slide ${currentIndex + 1}`} />
+
+      {/* Number navigation at the bottom center */}
+      <div className="image-slider-numbers">
+        {images.map((_, index) => (
+          <div
+            key={index}
+            className={`image-slider-number ${
+              index === currentIndex ? 'active' : ''
+            }`}
+            onClick={() => setCurrentIndex(index)}
+          >
+            {String(index + 1).padStart(2, '0')}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
   return (
     <div className="home">
+      {/* Add the ImageSlider component */}
+      <ImageSlider />
+
+      {/* Existing Homepage Components */}
       <FeaturedCollection collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
     </div>
