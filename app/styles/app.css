@@ -147,48 +147,84 @@ button.reset:hover:not(:has(> *)) {
 * components/Header
 * --------------------------------------------------
 */
+/*
+* --------------------------------------------------
+* components/Header (Updated)
+* --------------------------------------------------
+*/
 .header {
-  align-items: center;
-  background: #fff;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-light);
   height: var(--header-height);
-  padding: 0 1rem;
+  padding: 0 2rem;
   position: sticky;
   top: 0;
   z-index: 1;
 }
 
-.header-menu-mobile-toggle {
-  @media (min-width: 48em) {
-    display: none;
+/* Mobile Menu Toggle (only visible for tablet and smaller screens) */
+.header-mobile-toggle {
+  display: none;
+
+  /* Show the toggle icon for screens smaller than 1025px */
+  @media (max-width: 1024px) {
+    display: block;
+    order: -1; /* Ensure the toggle is to the left of the logo */
+    margin-right: 1rem;
   }
 }
 
+/* Categories on the left (visible on larger screens only) */
+.header-categories {
+  display: flex;
+  grid-gap: 1.5rem;
+
+  /* Hide categories on tablet and smaller screens */
+  @media (max-width: 1024px) {
+    display: none;
+  }
+
+  /* On larger screens, make sure categories are on the left side */
+  @media (min-width: 1025px) {
+    order: -1; /* Ensure the categories are to the left of the logo */
+  }
+}
+
+/* Logo in the center */
+.header-logo {
+  flex-grow: 1;
+  text-align: center;
+}
+
+/* CTAs on the right (Sign in, Search, Cart - always visible) */
+.header-ctas {
+  display: flex;
+  align-items: center;
+  grid-gap: 1.5rem;
+}
+
+/* Mobile Menu Styles */
 .header-menu-mobile {
   display: flex;
   flex-direction: column;
   grid-gap: 1rem;
 }
 
+/* Desktop Menu Styles */
 .header-menu-desktop {
   display: none;
   grid-gap: 1rem;
-  @media (min-width: 45em) {
+
+  @media (min-width: 1025px) {
     display: flex;
-    grid-gap: 1rem;
     margin-left: 3rem;
   }
 }
 
 .header-menu-item {
   cursor: pointer;
-}
-
-.header-ctas {
-  align-items: center;
-  display: flex;
-  grid-gap: 1rem;
-  margin-left: auto;
 }
 
 /*
