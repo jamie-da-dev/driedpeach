@@ -32,7 +32,6 @@ async function loadCriticalData({context}: LoaderFunctionArgs) {
     context.storefront.query(FEATURED_COLLECTION_QUERY),
     // Add other queries here, so that they are loaded in parallel
   ]);
-
   return {
     featuredCollection: collections.nodes[0],
   };
@@ -119,9 +118,10 @@ export default function Homepage() {
       <ImageSlider />
 
       {/* Existing Homepage Components */}
+      <AllCollections collections={data.collections} />
+
       <FeaturedCollection collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
-      <AllCollections collections={data.collections} />
     </div>
   );
 }
@@ -195,7 +195,7 @@ function AllCollections({
 }) {
   return (
     <div className="all-collections">
-      <h2>All Collections</h2>
+      <h2>Collections</h2>
       <Suspense fallback={<div>Loading...</div>}>
         <Await resolve={collections}>
           {(response) => (
@@ -207,6 +207,9 @@ function AllCollections({
                       className="collection-item"
                       to={`/collections/${collection.handle}`}
                     >
+                      <p className="collection-item-title">
+                        {collection.title}
+                      </p>
                       {collection.image && (
                         <Image
                           data={collection.image}
@@ -214,7 +217,9 @@ function AllCollections({
                           sizes="(min-width: 45em) 20vw, 50vw"
                         />
                       )}
-                      <h4>{collection.title}</h4>
+                      <p className="collection-item-description">
+                        {collection.description}
+                      </p>
                     </Link>
                   ))
                 : null}
@@ -285,6 +290,7 @@ const ALL_COLLECTIONS_QUERY = `#graphql
     id
     title
     handle
+    description
     image {
       id
       url
