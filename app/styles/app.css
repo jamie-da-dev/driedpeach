@@ -10,12 +10,9 @@
 
 body {
   background-color: #f7f3f3;
-  font-family: 'Inconsolata', monospace;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  font-variation-settings: 'wdth' 100;
   text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: ui-serif;
 }
 
 img {
@@ -171,7 +168,7 @@ button.reset:hover:not(:has(> *)) {
   padding: 0 2rem;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 99;
 }
 
 /* Mobile Menu Toggle (only visible for tablet and smaller screens) */
@@ -497,6 +494,14 @@ button.reset:hover:not(:has(> *)) {
   padding: 75px 75px 75px 75px;
 }
 
+.index-title {
+  margin-top: 30px;
+  font-size: 1.75rem;
+  font-family: 'Times New Roman', Times, serif;
+  letter-spacing: 0.05em;
+  margin-bottom: 20px;
+}
+
 .all-collections-grid {
   display: flex; /* Default: Flexbox for horizontal scrolling */
   flex-wrap: nowrap; /* Prevent wrapping */
@@ -507,11 +512,18 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .collection-item {
-  flex: 0 0 22.5%; /* Each item takes 25% width */
-  background-color: #f1eaea;
+  flex: 0 0 22.5%; /* Each item takes 22.5% width */
+  background-color: #f1ecec;
   text-align: center;
-  padding: 10px 45px 10px 45px; /* Optional: Add spacing inside the card */
+  padding: 10px 55px 10px 55px; /* Optional: Add spacing inside the card */
   box-sizing: border-box; /* Include padding in the width */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth animation for hover effects */
+}
+
+.collection-item:hover {
+  text-decoration: none; /* Ensure no underline on hover */
+  background-color: #ece3e3;
+  transform: translateY(-2.5px); /* Slight lift effect */
 }
 
 .collection-item img {
@@ -524,24 +536,26 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .collection-item-title {
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   margin-top: 55px;
   margin-bottom: 0px;
-  font-weight: 500;
-  text-transform: capitalize;
+  color: rgb(82, 72, 72);
 }
 
 .collection-item-description {
   margin-bottom: 55px;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.95rem;
   color: rgb(138, 124, 124);
-  text-transform: capitalize;
 }
 
 @media (max-width: 1024px) {
+  .index-title {
+    font-size: 1.35rem;
+    margin-bottom: 15px;
+    margin-left: 8px;
+  }
   .all-collections {
-    padding: 15px 15px 15px 15px;
+    padding: 8px 8px 8px 8px;
   }
   .collection-item {
     flex: 0 0 40%; /* Each item takes 25% width */
@@ -552,12 +566,12 @@ button.reset:hover:not(:has(> *)) {
     min-width: 150px;
   }
   .collection-item-title {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     margin-top: 30px;
   }
   .collection-item-description {
     margin-bottom: 30px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 }
 

@@ -195,7 +195,7 @@ function AllCollections({
 }) {
   return (
     <div className="all-collections">
-      <h2>Collections</h2>
+      <p className="index-title">Collections</p>
       <Suspense fallback={<div>Loading...</div>}>
         <Await resolve={collections}>
           {(response) => (
@@ -211,11 +211,7 @@ function AllCollections({
                         {collection.title}
                       </p>
                       {collection.image && (
-                        <Image
-                          data={collection.image}
-                          aspectRatio="1/1"
-                          sizes="(min-width: 45em) 20vw, 50vw"
-                        />
+                        <Image data={collection.image} aspectRatio="1/1" />
                       )}
                       <p className="collection-item-description">
                         {collection.description}
